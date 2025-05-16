@@ -18,7 +18,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:latest .'
+                    sh 'podman build -t $DOCKER_REGISTRY/$IMAGE_NAME:latest .'
                 }
             }
         }
@@ -26,14 +26,14 @@ pipeline {
         stage('Login to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-creds', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    sh 'echo $DOCKER_PASS | podman login -u $DOCKER_USER --password-stdin'
                 }
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
-                sh 'docker push $DOCKER_REGISTRY/$IMAGE_NAME:latest'
+                sh 'podman push $DOCKER_REGISTRY/$IMAGE_NAME:latest'
             }
         }
     }
